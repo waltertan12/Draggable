@@ -1,35 +1,35 @@
 (function (root) {
   'use strict';
-  var Draggable = root.Draggable = function (ids) {
+  root.Draggable = function (ids) {
     this.ids = ids;
     this.makeNodesDraggable(ids);
   };
 
-  Draggable.prototype.addIds = function (ids) {
+  root.Draggable.prototype.addIds = function (ids) {
     this.makeNodesDraggable(ids);
     this.ids.concat(ids);
   };
 
-  Draggable.prototype.addId = function (id) {
+  root.Draggable.prototype.addId = function (id) {
     this.makeNodeDraggable(id);
     this.ids.push(id);
   };
 
-  Draggable.prototype.removeId = (first_argument) => {
+  root.Draggable.prototype.removeId = function (id) {
     // TODO
   };
 
-  Draggable.prototype.removeIds = (first_argument) => {
+  root.Draggable.prototype.removeIds = function (ids) {
     // TODO
   };
 
-  Draggable.prototype.makeNodeDraggable = (id) => {
-    node = document.getElementById(id);
+  root.Draggable.prototype.makeNodeDraggable = function (id) {
+    var node = document.getElementById(id);
     this._addStyling(node)
-    this._makeDraggable(node);
+    this._addListeners(node);
   };
 
-  Draggable.prototype.makeNodesDraggable = function (ids) {
+  root.Draggable.prototype.makeNodesDraggable = function (ids) {
     var len = ids.length, i, id, node;
     for (i = 0; i < len; i++) {
       id = ids[i];
@@ -37,13 +37,12 @@
     }
   };
 
-  Draggable.prototype._addStyling = (node) => {
-    node = document.getElementById(id);
+  root.Draggable.prototype._addStyling = function (node) {
     node.style.position = "fixed";
     node.style.cursor = "-webkit-grabbing";
   };
 
-  Draggable.prototype._addListeners = (node) => {
+  root.Draggable.prototype._addListeners = function (node) {
     var dragState = false,
         dX, dY;
 
