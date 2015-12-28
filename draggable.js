@@ -1,29 +1,39 @@
 (function (root) {
   'use strict';
   root.Draggable = function (ids) {
-    this.ids = ids;
+    this.ids = {};
     this.makeNodesDraggable(ids);
   };
 
   root.Draggable.prototype.addIds = function (ids) {
     this.makeNodesDraggable(ids);
-    this.ids.concat(ids);
   };
 
   root.Draggable.prototype.addId = function (id) {
     this.makeNodeDraggable(id);
-    this.ids.push(id);
+  };
+
+  root.Draggable.prototype._storeId = function (id) {
+    if (!this.ids[id]) this.ids[id] = true;
   };
 
   root.Draggable.prototype.removeId = function (id) {
-    // TODO
+    if (!this.ids[id]) return;
+    var node = document.getElementById(id);
+    node.removeEventListener("mousedown", _dragstart);
+    delete this.ids[id];
   };
 
   root.Draggable.prototype.removeIds = function (ids) {
-    // TODO
+    var len = ids.length, id, i;
+    for (i = 0; i < len; i++) {
+      id = ids[i];
+      this.removeId(id);
+    }
   };
 
   root.Draggable.prototype.makeNodeDraggable = function (id) {
+    this._storeId(id);
     var node = document.getElementById(id);
     this._addStyling(node)
     this._addListeners(node);
@@ -44,15 +54,16 @@
 
   root.Draggable.prototype._addListeners = function (node) {
     var dragState = false,
+        _dragstart = function (e) {
+          dragState = true;
+          var rect = node.getBoundingClientRect();
+          dX = e.clientX - rect.left;
+          dY = e.clientY - rect.top;
+        },
         dX, dY;
 
     // Mouse Listeners
-    node.addEventListener("mousedown", function (e) {
-      dragState = true;
-      var rect = node.getBoundingClientRect();
-      dX = e.clientX - rect.left;
-      dY = e.clientY - rect.top;
-    }, false)
+    node.addEventListener("mousedown", _dragstart, false);
 
     document.addEventListener("mousemove", function (e) {
       if (dragState) {
@@ -66,12 +77,7 @@
     }, false);
 
     // Touch Listeners
-    node.addEventListener("touchstart", function (e) {
-      dragState = true;
-      var rect = d.getBoundingClientRect();
-      dX = e.targetTouches[0].clientX - rect.left;
-      dY = e.targetTouches[0].clientY - rect.top;
-    }, false)
+    node.addEventListener("touchstart", _dragstart, false);
 
     document.addEventListener("touchmove", function (e) {
       if (dragState) {
